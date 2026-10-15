@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../helpers/db.php';
 
-// ВАЖНО: обработка выхода должна быть ПЕРВОЙ, до проверки авторизации!
+// ВАЖНО: обработка выхода должна быть ПЕРВОЙ!
 if (isset($_GET['logout'])) {
     session_destroy();
     header('Location: index.php');
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $login    = trim($_POST['login']    ?? '');
     $password = $_POST['password']      ?? '';
 
-    // --- Валидация ---
+    // --- Валидация (убраны ограничения на длину!) ---
     if ($login === '') {
         $errors['login'] = 'Введите логин';
     } elseif (!preg_match('/^[A-Za-z0-9]+$/', $login)) {
@@ -37,11 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($errors)) {
         try {
             $db  = getDB();
+            
+            // ВАЖНО: id_user, а не id!
             $sql = 'SELECT id_user, login, password, fio, role_id FROM users WHERE login = :login LIMIT 1';
             $stmt = $db->prepare($sql);
             $stmt->execute([':login' => $login]);
             $user = $stmt->fetch();
 
+            // ВАЖНО: md5(), а не password_verify()!
             if ($user && md5($password) === $user['password']) {
                 $_SESSION['user_id']    = $user['id_user'];
                 $_SESSION['user_login'] = $user['login'];
@@ -76,9 +79,12 @@ ob_start();
             <div class="alert alert-error"><?= htmlspecialchars($errors['auth']) ?></div>
         <?php endif; ?>
         
+        <!-- Логин -->
         <div class="form-group">
             <label for="login">Логин</label>
-            <input type="text" id="login" name="login"
+            <input type="text"
+                   id="login"
+                   name="login"
                    value="<?= htmlspecialchars($login) ?>"
                    placeholder="Например: user"
                    pattern="[A-Za-z0-9]+"
@@ -90,9 +96,12 @@ ob_start();
             <?php endif; ?>
         </div>
         
+        <!-- Пароль -->
         <div class="form-group">
             <label for="password">Пароль</label>
-            <input type="password" id="password" name="password"
+            <input type="password"
+                   id="password"
+                   name="password"
                    placeholder="Введите пароль"
                    required>
             <?php if (!empty($errors['password'])): ?>
@@ -100,8 +109,10 @@ ob_start();
             <?php endif; ?>
         </div>
         
+        <!-- Кнопка -->
         <button type="submit" class="btn btn-primary btn-block">Войти</button>
         
+        <!-- Ссылка на регистрацию -->
         <div class="auth-footer">
             Нет аккаунта?
             <a href="/DE/korochky/korochki/pages/register.php">Зарегистрироваться</a>
@@ -111,4 +122,5 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
+// ---------- Подключаем общий шаблон ----------
 require __DIR__ . '/layout.php';

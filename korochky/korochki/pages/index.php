@@ -1,28 +1,15 @@
 <?php
+require_once __DIR__ . '/../helpers/db.php';
+
 // ---------- Настройки страницы ----------
 $pageTitle = 'Главная — Корочки.Есть';
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-require_once __DIR__ . '/../helpers/db.php';
-
-// ОТЛАДКА: покажем, что в сессии
-echo "<pre style='background:#ff0;color:#000;padding:10px;'>";
-echo "SESSION данные:\n";
-print_r($_SESSION);
-echo "\nuser_id = " . ($_SESSION['user_id'] ?? 'НЕ УСТАНОВЛЕН');
-echo "</pre>";
-// exit; // раскомментируйте, чтобы остановить выполнение и посмотреть результат
-
-// Хлебные крошки
 $breadcrumbs = [
     ['title' => 'Главная', 'url' => '/DE/korochky/korochki/pages/index.php'],
 ];
 
 // Кнопки навигации в шапке - меняются в зависимости от авторизации
 if (!empty($_SESSION['user_id'])) {
-    // Пользователь авторизован - показываем имя и кнопку выхода
     $navButtons = [
         ['title' => htmlspecialchars($_SESSION['user_fio'] ?? $_SESSION['user_login']), 
          'url' => '#', 
@@ -33,7 +20,6 @@ if (!empty($_SESSION['user_id'])) {
          'class' => 'btn-logout'],
     ];
 } else {
-    // Пользователь не авторизован - показываем вход и регистрацию
     $navButtons = [
         ['title' => 'Регистрация', 'url' => '/DE/korochky/korochki/pages/register.php', 'class' => 'btn-register'],
         ['title' => 'Вход',        'url' => '/DE/korochky/korochki/pages/auth.php',     'class' => 'btn-login'],
@@ -94,5 +80,4 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
-// ---------- Подключаем шаблон ----------
 require __DIR__ . '/layout.php';

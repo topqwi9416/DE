@@ -1,23 +1,35 @@
 <?php
 require_once __DIR__ . '/../helpers/db.php';
 
+// ---------- Обработка выхода ----------
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: index.php');
+    exit;
+}
+
 // ---------- Настройки страницы ----------
 $pageTitle = 'Главная — Корочки.Есть';
 
+// Хлебные крошки
 $breadcrumbs = [
     ['title' => 'Главная', 'url' => '/DE/korochky/korochki/pages/index.php'],
 ];
 
-// Кнопки навигации в шапке - меняются в зависимости от авторизации
+// Кнопки навигации в шапке — меняются в зависимости от авторизации
 if (!empty($_SESSION['user_id'])) {
     $navButtons = [
-        ['title' => htmlspecialchars($_SESSION['user_fio'] ?? $_SESSION['user_login']), 
-         'url' => '#', 
-         'class' => 'btn-user-name',
-         'is_text' => true],
-        ['title' => 'Выход', 
-         'url' => '/DE/korochky/korochki/pages/auth.php?logout=1', 
-         'class' => 'btn-logout'],
+        [
+            'title'   => htmlspecialchars($_SESSION['user_fio'] ?? $_SESSION['user_login']),
+            'url'     => '#',
+            'class'   => 'btn-user-name',
+            'is_text' => true,
+        ],
+        [
+            'title' => 'Выход',
+            'url'   => '/DE/korochky/korochki/pages/index.php?logout=1',
+            'class' => 'btn-logout',
+        ],
     ];
 } else {
     $navButtons = [
@@ -46,7 +58,12 @@ ob_start();
             <a href="/DE/korochky/korochki/pages/requests.php" class="btn btn-primary">
                 Мои заявки
             </a>
-            <a href="/DE/korochky/korochki/pages/auth.php?logout=1" class="btn btn-secondary">
+            <?php if (!empty($_SESSION['role_id']) && $_SESSION['role_id'] == 1): ?>
+                <a href="/DE/korochky/korochki/pages/admin.php" class="btn btn-secondary">
+                    Панель админа
+                </a>
+            <?php endif; ?>
+            <a href="/DE/korochky/korochki/pages/index.php?logout=1" class="btn btn-outline">
                 Выйти
             </a>
         <?php else: ?>
@@ -68,11 +85,11 @@ ob_start();
             <p>По окончании курса вы получаете диплом или удостоверение установленного образца.</p>
         </div>
         <div class="feature-card">
-            <h4>💻 Онлайн-обучение</h4>
+            <h4> Онлайн-обучение</h4>
             <p>Учитесь в удобное для вас время из любой точки мира.</p>
         </div>
         <div class="feature-card">
-            <h4>‍🏫 Опытные преподаватели</h4>
+            <h4>👨‍🏫 Опытные преподаватели</h4>
             <p>Курсы ведут практикующие специалисты с многолетним опытом.</p>
         </div>
     </div>
@@ -80,4 +97,5 @@ ob_start();
 <?php
 $content = ob_get_clean();
 
+// ---------- Подключаем шаблон ----------
 require __DIR__ . '/layout.php';

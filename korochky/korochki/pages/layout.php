@@ -2,7 +2,7 @@
 // Ожидаемые переменные из подключающего файла:
 // $pageTitle      — заголовок страницы (для <title>)
 // $breadcrumbs    — массив хлебных крошек [['title' => '...', 'url' => '...'], ...]
-// $navButtons     — массив кнопок навигации [['title' => '...', 'url' => '...', 'class' => '...'], ...]
+// $navButtons     — массив кнопок навигации [['title' => '...', 'url' => '...', 'class' => '...', 'is_text' => true/false], ...]
 // $content        — основной HTML-контент страницы
 
 $pageTitle   = $pageTitle   ?? 'Корочки.Есть';
@@ -28,20 +28,30 @@ $logoPath = '/DE/korochky/korochki/media/image02.jpg';
     <div class="header-top">
         <!-- Логотип -->
         <a href="/DE/korochky/korochki/pages/index.php" class="logo">
-            <img src="<?= $logoPath ?>" alt="Логотип Корочки.Есть">
+            <img src="<?= htmlspecialchars($logoPath) ?>" alt="Логотип Корочки.Есть">
         </a>
 
         <!-- Название портала -->
         <h1 class="site-title">Корочки.Есть</h1>
 
-        <!-- Навигационные кнопки -->
+        <!-- Навигационные кнопки (ИСПРАВЛЕНО: убран дублирующийся блок) -->
         <nav class="nav-buttons">
-            <?php foreach ($navButtons as $btn): ?>
-                <a href="<?= htmlspecialchars($btn['url'] ?? '#') ?>"
-                   class="nav-btn <?= htmlspecialchars($btn['class'] ?? '') ?>">
-                    <?= htmlspecialchars($btn['title']) ?>
-                </a>
-            <?php endforeach; ?>
+            <?php if (!empty($navButtons)): ?>
+                <?php foreach ($navButtons as $btn): ?>
+                    <?php if (!empty($btn['is_text'])): ?>
+                        <!-- Если это просто текст (например, имя пользователя при авторизации) -->
+                        <span class="<?= htmlspecialchars($btn['class'] ?? '') ?>">
+                            <?= htmlspecialchars($btn['title']) ?>
+                        </span>
+                    <?php else: ?>
+                        <!-- Если это ссылка (Вход, Выход, Регистрация) -->
+                        <a href="<?= htmlspecialchars($btn['url'] ?? '#') ?>" 
+                           class="nav-btn <?= htmlspecialchars($btn['class'] ?? '') ?>">
+                            <?= htmlspecialchars($btn['title']) ?>
+                        </a>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </nav>
     </div>
 

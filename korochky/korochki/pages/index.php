@@ -19,17 +19,10 @@ $breadcrumbs = [
 // Кнопки навигации в шапке — меняются в зависимости от авторизации
 if (!empty($_SESSION['user_id'])) {
     $navButtons = [
-        [
-            'title'   => htmlspecialchars($_SESSION['user_fio'] ?? $_SESSION['user_login']),
-            'url'     => '#',
-            'class'   => 'btn-user-name',
-            'is_text' => true,
-        ],
-        [
-            'title' => 'Выход',
-            'url'   => '/DE/korochky/korochki/pages/index.php?logout=1',
-            'class' => 'btn-logout',
-        ],
+        ['title' => htmlspecialchars($_SESSION['user_fio'] ?? $_SESSION['user_login']), 
+         'url' => '#', 'class' => 'btn-user-name', 'is_text' => true],
+        ['title' => 'Выход', 
+         'url' => '/DE/korochky/korochki/pages/index.php?logout=1', 'class' => 'btn-logout'],
     ];
 } else {
     $navButtons = [
@@ -45,7 +38,7 @@ ob_start();
     <h2 class="hero-title">Добро пожаловать на портал «Корочки.Есть»!</h2>
     <p class="hero-description">
         Портал <strong>«Корочки.Есть»</strong> представляет собой информационную
-        систему для записи на онлайн-курсы дополнительного профессионального
+        систему для записы на онлайн-курсы дополнительного профессионального
         образования.
     </p>
     <p class="hero-description">
@@ -58,9 +51,9 @@ ob_start();
             <a href="/DE/korochky/korochki/pages/requests.php" class="btn btn-primary">
                 Мои заявки
             </a>
-            <?php if (!empty($_SESSION['role_id']) && $_SESSION['role_id'] == 1): ?>
+            <?php if (($_SESSION['role_id'] ?? 0) == 1): ?>
                 <a href="/DE/korochky/korochki/pages/admin.php" class="btn btn-secondary">
-                    Панель админа
+                    ⚙️ Панель админа
                 </a>
             <?php endif; ?>
             <a href="/DE/korochky/korochki/pages/index.php?logout=1" class="btn btn-outline">
@@ -85,11 +78,11 @@ ob_start();
             <p>По окончании курса вы получаете диплом или удостоверение установленного образца.</p>
         </div>
         <div class="feature-card">
-            <h4> Онлайн-обучение</h4>
+            <h4>💻 Онлайн-обучение</h4>
             <p>Учитесь в удобное для вас время из любой точки мира.</p>
         </div>
         <div class="feature-card">
-            <h4>👨‍🏫 Опытные преподаватели</h4>
+            <h4>👨‍ Опытные преподаватели</h4>
             <p>Курсы ведут практикующие специалисты с многолетним опытом.</p>
         </div>
     </div>
